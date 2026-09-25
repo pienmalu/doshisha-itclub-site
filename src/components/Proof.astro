@@ -1,17 +1,14 @@
 ---
 import { ventures } from '../data/site';
-
-/** 伏せ字の幅を決定的にばらす。実在の名前の長さは推測させない */
-const bar = (seed: string) => 4.6 + ((seed.length * 7) % 5) * 1.15;
 ---
 
 <section class="section proof" id="proof">
   <div class="shell proof__grid">
     <div class="proof__head reveal">
       <p class="eyebrow">02 — PROOF</p>
-      <h2 class="headline proof__title">思いつきの<br />集まりではない。</h2>
+      <h2 class="headline proof__title">作って、<br />その先へ。</h2>
       <p class="prose proof__note">
-        同志社大学の承認を受けた正規の団体として活動している。学内の教室と設備を使い、公式に募集をかけられる。サークルの届け出と会計は大学の手続きに沿って処理している。
+        同志社大学の公認団体として、学内の教室も使いながら活動している。メンバーが取り組んだものには、法人化や事業譲渡につながった例もある。
       </p>
     </div>
 
@@ -21,13 +18,6 @@ const bar = (seed: string) => 4.6 + ((seed.length * 7) % 5) * 1.15;
           <li class="proof__item reveal" style={`--reveal-delay:${i * 90}ms`}>
             <span class="proof__id numeral">{v.id}</span>
             <div class="proof__row">
-              <span
-                class="proof__redact"
-                style={`--w:${bar(v.title)}em`}
-                title="名称は非公開"
-                aria-hidden="true"
-              ></span>
-              <span class="visually-hidden">名称は非公開</span>
               <span class="caption proof__meta">
                 <span class="numeral">{v.year}</span> / {v.tag}
               </span>
@@ -40,9 +30,6 @@ const bar = (seed: string) => 4.6 + ((seed.length * 7) % 5) * 1.15;
     </ol>
   </div>
 
-  <p class="shell caption proof__disclaimer reveal">
-    実名と法人名は公開していない。確認が必要な場合は個別に応じる。
-  </p>
 </section>
 
 <style>
@@ -91,23 +78,6 @@ const bar = (seed: string) => 4.6 + ((seed.length * 7) % 5) * 1.15;
     flex-wrap: wrap;
   }
 
-  /* 名前があるはずの場所。伏せていること自体を見せる */
-  .proof__redact {
-    display: block;
-    width: var(--w);
-    height: 1.05rem;
-    background: repeating-linear-gradient(
-      90deg,
-      rgba(128, 82, 255, 0.55) 0 0.45rem,
-      rgba(128, 82, 255, 0.2) 0.45rem 0.5rem
-    );
-    transition: filter 0.4s ease;
-  }
-
-  .proof__item:hover .proof__redact {
-    filter: brightness(1.45);
-  }
-
   .proof__meta {
     letter-spacing: 0.14em;
   }
@@ -126,11 +96,6 @@ const bar = (seed: string) => 4.6 + ((seed.length * 7) % 5) * 1.15;
     color: var(--color-ash-gray);
     line-height: 1.85;
     max-width: 30em;
-  }
-
-  .proof__disclaimer {
-    margin-top: clamp(3rem, 2rem + 3vw, 4.5rem);
-    letter-spacing: 0.08em;
   }
 
   @media (min-width: 1000px) {

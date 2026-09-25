@@ -27,7 +27,7 @@ SITE_URL=https://example.jp npm run build
 
 | 場所 | 項目 | 現在の仮値 |
 |---|---|---|
-| `brand.mark` | 視覚的なワードマーク | `ANON.VENTURES` |
+| `brand.mark` | 視覚的なワードマーク | `DOSHISHA IT` |
 | `brand.nameJa` | 検索に出したい正式名称 | 同志社IT起業サークル |
 | `brand.founded` | 設立年 | 2019 |
 | `stats` | 設立・在籍・法人化・選考 | 2019年 / 42名 / 3社 / なし |
@@ -42,7 +42,7 @@ SITE_URL=https://example.jp npm run build
 
 `links` の値を空文字にすると、フッターのその行は出力されない。
 
-数値と実績は検索結果とSNSに出る。**事実と異なる値のまま公開しない。** 実績の名称は意図的に伏せ字にしてあるので、社名やサービス名を書く必要はない。
+数値と実績は検索結果とSNSに出る。**事実と異なる値のまま公開しない。** 実績は活動内容が伝わる範囲で記載し、社名やサービス名の公開は当事者と相談して決める。
 
 画像を差し替えるときは `public/images/` に置き、`media.inside` の `src` / `width` / `height` / `alt` を実寸に合わせて更新する。`width` と `height` はレイアウトのずれ（CLS）を防ぐために必要。
 
