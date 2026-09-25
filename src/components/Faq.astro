@@ -1,0 +1,151 @@
+---
+import { faq } from '../data/site';
+---
+
+<section class="section faq" id="faq">
+  <div class="shell faq__grid">
+    <div class="faq__head reveal">
+      <p class="eyebrow">06 — QUESTIONS</p>
+      <h2 class="headline faq__title">先に<br />答えておく。</h2>
+    </div>
+
+    <div class="faq__list">
+      {
+        faq.map((item, i) => (
+          <details class="faq__item reveal" style={`--reveal-delay:${i * 50}ms`} name="faq">
+            <summary>
+              <span class="faq__q">{item.q}</span>
+              <span class="faq__sign" aria-hidden="true"></span>
+            </summary>
+            <div class="faq__a">
+              <p>{item.a}</p>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__grid {
+    display: grid;
+    gap: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+  }
+
+  .faq__title {
+    margin-top: clamp(1rem, 0.75rem + 1vw, 1.75rem);
+  }
+
+  .faq__list {
+    display: grid;
+  }
+
+  /*
+    デザインシステムは境界線を置かない方針だが、開閉できる行であることを
+    示す手掛かりがないと使えないため、ここだけ 8% の細線を許している。
+  */
+  .faq__item {
+    border-top: 1px solid var(--hairline);
+  }
+
+  .faq__item:last-child {
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .faq__item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: clamp(1.1rem, 1rem + 0.5vw, 1.6rem) 0;
+    cursor: pointer;
+    list-style: none;
+    transition: color 0.3s ease;
+  }
+
+  .faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__q {
+    font-size: var(--step-lead);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+  }
+
+  .faq__item summary:hover .faq__q {
+    color: var(--color-bone-white);
+  }
+
+  .faq__item:not([open]) summary:hover .faq__sign {
+    transform: rotate(90deg);
+  }
+
+  /* 十字 → 横線 で開閉を示す */
+  .faq__sign {
+    position: relative;
+    flex: none;
+    width: 0.85rem;
+    height: 0.85rem;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .faq__sign::before,
+  .faq__sign::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 1px;
+    background: var(--color-electric-iris);
+  }
+
+  .faq__sign::after {
+    transform: rotate(90deg);
+    transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .faq__item[open] .faq__sign::after {
+    opacity: 0;
+    transform: rotate(0deg);
+  }
+
+  .faq__a {
+    padding-bottom: clamp(1.25rem, 1rem + 1vw, 2rem);
+    max-width: 42em;
+  }
+
+  .faq__a p {
+    color: var(--color-silver-mist);
+    line-height: 1.95;
+  }
+
+  /* 開閉のなめらかさ。対応していないブラウザでは即時に開く */
+  @supports (interpolate-size: allow-keywords) {
+    .faq__item::details-content {
+      block-size: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: block-size 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease,
+        content-visibility 0.5s allow-discrete;
+    }
+
+    .faq__item[open]::details-content {
+      block-size: auto;
+      opacity: 1;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .faq__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      align-items: start;
+    }
+
+    .faq__head {
+      position: sticky;
+      top: 8rem;
+    }
+  }
+</style>

@@ -1,0 +1,50 @@
+---
+interface Props {
+  /** ワードマークを出さず、マークだけにする */
+  markOnly?: boolean;
+  label?: string;
+}
+const { markOnly = false, label } = Astro.props;
+---
+
+<span class="logo">
+  <svg class="logo__mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="logo-shard" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8052ff" />
+        <stop offset="1" stop-color="#15846e" />
+      </linearGradient>
+    </defs>
+    <path d="M12.2 1.5 L21.5 22 L12.2 22 Z" fill="url(#logo-shard)" />
+    <path
+      d="M9.4 8.6 L2.5 22 L9.4 22 Z"
+      fill="none"
+      stroke="#8052ff"
+      stroke-width="1.3"
+      stroke-linejoin="miter"
+    />
+  </svg>
+  {!markOnly && <span class="logo__word">{label}</span>}
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .logo__mark {
+    width: 1.35rem;
+    height: 1.35rem;
+    flex: none;
+  }
+
+  .logo__word {
+    font-size: var(--text-nav-label);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.16em;
+    color: var(--color-bone-white);
+    white-space: nowrap;
+  }
+</style>

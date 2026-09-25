@@ -1,0 +1,153 @@
+---
+import { ventures } from '../data/site';
+
+/** 伏せ字の幅を決定的にばらす。実在の名前の長さは推測させない */
+const bar = (seed: string) => 4.6 + ((seed.length * 7) % 5) * 1.15;
+---
+
+<section class="section proof" id="proof">
+  <div class="shell proof__grid">
+    <div class="proof__head reveal">
+      <p class="eyebrow">02 — PROOF</p>
+      <h2 class="headline proof__title">思いつきの<br />集まりではない。</h2>
+      <p class="prose proof__note">
+        同志社大学の承認を受けた正規の団体として活動している。学内の教室と設備を使い、公式に募集をかけられる。サークルの届け出と会計は大学の手続きに沿って処理している。
+      </p>
+    </div>
+
+    <ol class="proof__list">
+      {
+        ventures.map((v, i) => (
+          <li class="proof__item reveal" style={`--reveal-delay:${i * 90}ms`}>
+            <span class="proof__id numeral">{v.id}</span>
+            <div class="proof__row">
+              <span
+                class="proof__redact"
+                style={`--w:${bar(v.title)}em`}
+                title="名称は非公開"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">名称は非公開</span>
+              <span class="caption proof__meta">
+                <span class="numeral">{v.year}</span> / {v.tag}
+              </span>
+            </div>
+            <h3 class="proof__name">{v.title}</h3>
+            <p class="proof__desc">{v.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  <p class="shell caption proof__disclaimer reveal">
+    実名と法人名は公開していない。確認が必要な場合は個別に応じる。
+  </p>
+</section>
+
+<style>
+  .proof__grid {
+    display: grid;
+    gap: clamp(3rem, 2rem + 6vw, 7rem);
+  }
+
+  .proof__title {
+    margin-top: clamp(1rem, 0.75rem + 1vw, 1.75rem);
+  }
+
+  .proof__note {
+    margin-top: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
+    max-width: 30em;
+  }
+
+  .proof__list {
+    display: grid;
+    gap: clamp(2.75rem, 2rem + 3vw, 4.5rem);
+  }
+
+  .proof__item {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    grid-template-areas:
+      'id row'
+      '.  name'
+      '.  desc';
+    column-gap: 0.5rem;
+  }
+
+  .proof__id {
+    grid-area: id;
+    font-size: var(--text-caption);
+    letter-spacing: 0.14em;
+    color: var(--color-electric-iris);
+    padding-top: 0.55rem;
+  }
+
+  .proof__row {
+    grid-area: row;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  /* 名前があるはずの場所。伏せていること自体を見せる */
+  .proof__redact {
+    display: block;
+    width: var(--w);
+    height: 1.05rem;
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(128, 82, 255, 0.55) 0 0.45rem,
+      rgba(128, 82, 255, 0.2) 0.45rem 0.5rem
+    );
+    transition: filter 0.4s ease;
+  }
+
+  .proof__item:hover .proof__redact {
+    filter: brightness(1.45);
+  }
+
+  .proof__meta {
+    letter-spacing: 0.14em;
+  }
+
+  .proof__name {
+    grid-area: name;
+    margin-top: 0.85rem;
+    font-size: var(--text-heading-2xs);
+    letter-spacing: var(--tracking-heading-2xs);
+    line-height: 1.35;
+  }
+
+  .proof__desc {
+    grid-area: desc;
+    margin-top: 0.6rem;
+    color: var(--color-ash-gray);
+    line-height: 1.85;
+    max-width: 30em;
+  }
+
+  .proof__disclaimer {
+    margin-top: clamp(3rem, 2rem + 3vw, 4.5rem);
+    letter-spacing: 0.08em;
+  }
+
+  @media (min-width: 1000px) {
+    /* 01 とは反転させて、読みのリズムをつくる */
+    .proof__grid {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+      align-items: start;
+    }
+
+    .proof__list {
+      order: -1;
+    }
+
+    .proof__head {
+      position: sticky;
+      top: 8rem;
+      order: 1;
+    }
+  }
+</style>

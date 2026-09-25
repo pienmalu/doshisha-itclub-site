@@ -1,0 +1,278 @@
+---
+import Logo from './Logo.astro';
+import { brand, nav, links } from '../data/site';
+
+// トップ以外のページからはアンカーだけでは飛べないので、パスを付ける
+const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '';
+const to = (hash: string) => (isHome ? hash : `/${hash}`);
+---
+
+<header class="header" data-header>
+  <div class="header__inner shell">
+    <a class="header__brand" href="/" aria-label={`${brand.nameJa} ホーム`}>
+      <Logo label={brand.mark} />
+    </a>
+
+    <nav class="header__nav" aria-label="サイト内">
+      <ul>
+        {
+          nav.map((item) => (
+            <li>
+              <a href={to(item.href)} data-nav-link>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <a class="pill header__cta" href={links.join} rel="noopener">
+        参加する
+        <span class="pill__arrow" aria-hidden="true">→</span>
+      </a>
+      <button
+        class="header__burger"
+        type="button"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-controls="site-menu"
+      >
+        <span class="visually-hidden" data-menu-label>メニューを開く</span>
+        <span class="header__burger-bar" aria-hidden="true"></span>
+        <span class="header__burger-bar" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="menu" id="site-menu" data-menu>
+  <nav class="menu__inner shell" aria-label="サイト内（メニュー）">
+    <ul>
+      {
+        nav.map((item, i) => (
+          <li style={`--i:${i}`}>
+            <a href={to(item.href)}>
+              <span class="menu__index numeral">{String(i + 1).padStart(2, '0')}</span>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <a class="pill menu__cta" href={links.join} rel="noopener">
+      参加する
+      <span class="pill__arrow" aria-hidden="true">→</span>
+    </a>
+  </nav>
+</div>
+
+<style>
+  .header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 40;
+    /* 純黒はキャンバスと同色なので、面として認識されないまま本文だけを隠せる */
+    background: var(--color-void);
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.4s ease;
+  }
+
+  .header:not(.is-scrolled) {
+    background: transparent;
+  }
+
+  .header.is-hidden {
+    transform: translateY(-100%);
+  }
+
+  /* ヘッダーの下端を切り落として、本文が硬い直線で消えないようにする */
+  .header.is-scrolled::after {
+    content: '';
+    position: absolute;
+    inset: 100% 0 auto;
+    height: 2.5rem;
+    background: linear-gradient(to bottom, var(--color-void), transparent);
+    pointer-events: none;
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-24);
+    min-height: 4.75rem;
+  }
+
+  .header__brand {
+    margin-right: auto;
+  }
+
+  .header__nav ul {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2vw, 1.75rem);
+  }
+
+  .header__nav a {
+    display: inline-block;
+    padding-block: 0.35rem;
+    font-size: var(--text-nav-label);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.12em;
+    color: var(--color-ash-gray);
+    transition: color 0.3s ease;
+  }
+
+  .header__nav a:hover,
+  .header__nav a.is-current {
+    color: var(--color-bone-white);
+  }
+
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-18);
+  }
+
+  /*
+    デザインシステムは塗りボタンを 1 ビューに 1 つに限っている。
+    ヒーローの CTA が見えているあいだはヘッダーの CTA を出さず、
+    ヒーローを抜けてから引き継ぐ。
+  */
+  .header__cta {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.35rem);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 0.4s, background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .header.is-past-hero .header__cta {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 0s, background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .header__burger {
+    display: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.35rem;
+    align-items: flex-end;
+  }
+
+  .header__burger-bar {
+    display: block;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--color-bone-white);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), width 0.4s ease;
+  }
+
+  .header__burger-bar:last-child {
+    width: 1rem;
+  }
+
+  .header__burger:hover .header__burger-bar:last-child {
+    width: 1.5rem;
+  }
+
+  /* 開いているあいだは × にする */
+  .header__burger[aria-expanded='true'] .header__burger-bar {
+    width: 1.5rem;
+  }
+
+  .header__burger[aria-expanded='true'] .header__burger-bar:first-of-type {
+    transform: translateY(0.175rem) rotate(45deg);
+  }
+
+  .header__burger[aria-expanded='true'] .header__burger-bar:last-of-type {
+    transform: translateY(-0.175rem) rotate(-45deg);
+  }
+
+  /* --- メニュー（狭い画面）------------------------------------------------ */
+
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 39;
+    background: var(--color-void);
+    display: grid;
+    align-content: center;
+    opacity: 0;
+    visibility: hidden;
+    /*
+      開くときは visibility を即座に切り替える（遅延 0s）。
+      トランジション中の visibility: hidden では focus() が効かないため。
+      閉じるときは opacity のフェードが終わってから隠す（遅延 0.45s）。
+    */
+    transition: opacity 0.45s ease, visibility 0s linear 0.45s;
+  }
+
+  .menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.45s ease, visibility 0s linear 0s;
+  }
+
+  .menu__inner {
+    display: grid;
+    gap: var(--spacing-36);
+  }
+
+  .menu ul {
+    display: grid;
+    gap: var(--spacing-18);
+  }
+
+  .menu li {
+    opacity: 0;
+    transform: translateY(0.75rem);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--i) * 55ms + 120ms);
+  }
+
+  .menu.is-open li {
+    opacity: 1;
+    transform: none;
+  }
+
+  .menu a {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    font-size: var(--step-subheading);
+    letter-spacing: -0.02em;
+    font-weight: var(--font-weight-regular);
+  }
+
+  .menu__index {
+    font-size: var(--text-caption);
+    letter-spacing: 0.16em;
+    color: var(--color-electric-iris);
+  }
+
+  .menu__cta {
+    justify-self: start;
+  }
+
+  @media (max-width: 859px) {
+    .header__nav,
+    .header__cta {
+      display: none;
+    }
+
+    .header__burger {
+      display: flex;
+    }
+  }
+
+  @media (min-width: 860px) {
+    .menu {
+      display: none;
+    }
+  }
+</style>

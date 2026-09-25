@@ -1,0 +1,379 @@
+/*
+  デザインシステムのトークンはこの1ファイルからのみ読み込む。
+  design-system/ 側を書き換えれば、サイト全体に反映される。
+*/
+@import '../../design-system/variables.css';
+
+:root {
+  /* --- 和文の扱い ---------------------------------------------------------
+     PPNeueMontreal には和文がないため、欧文は Inter（デザインシステム指定の
+     代替）、和文は Noto Sans JP に振る。Noto Sans JP は weight 200 を持つので、
+     デザインシステムの「本文は 200」という決めごとを和文でも守れる。 */
+  --font-sans: 'Inter', 'Noto Sans JP', var(--font-ppneuemontreal);
+
+  /* --- 流体タイプスケール -------------------------------------------------
+     デザインシステムの固定値を最大値として、狭い画面へ滑らかに落とす。
+     和文は欧文より字面が大きいので、上限を欧文指定より一段抑えている。 */
+  --step-display: clamp(2.35rem, 0.9rem + 8.2vw, 6.375rem);   /* → 102px */
+  --step-heading-lg: clamp(2.25rem, 1.2rem + 5.2vw, 4.25rem); /* → 68px */
+  --step-heading: clamp(1.75rem, 1.2rem + 2.6vw, 2.625rem);   /* → 42px */
+  --step-subheading: clamp(1.375rem, 1.1rem + 1.4vw, 1.875rem);
+  --step-lead: clamp(1.0625rem, 1rem + 0.5vw, 1.25rem);
+  --step-body: clamp(1rem, 0.97rem + 0.15vw, 1.125rem);
+
+  /* --- 余白 --------------------------------------------------------------- */
+  --gutter: clamp(1.25rem, 0.5rem + 3.5vw, 3.75rem);
+  --section-y: clamp(5rem, 3rem + 9vw, 11.25rem);
+
+  --hairline: rgba(255, 255, 255, 0.08);
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  /* 固定ヘッダー分をアンカー着地位置から差し引く */
+  scroll-padding-top: 5.5rem;
+}
+
+body {
+  margin: 0;
+  background: var(--color-void);
+  color: var(--color-bone-white);
+  font-family: var(--font-sans);
+  font-size: var(--step-body);
+  font-weight: var(--font-weight-extralight);
+  line-height: var(--leading-body);
+  /* palt で和文を詰める。ss01 は PPNeueMontreal 固有の指定なので Inter には渡さない */
+  font-feature-settings: 'palt' 1;
+  font-optical-sizing: auto;
+  /* 行頭に「ー」や促音・拗音が来る折り返しを避ける */
+  line-break: strict;
+  word-break: normal;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-spacing-trim: trim-start;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  /* 見出しは常に weight 400。太字にしない（階層は大きさと字間で作る） */
+  font-weight: var(--font-weight-regular);
+  margin: 0;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+}
+
+ul,
+ol,
+dl,
+dd {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+svg,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--color-electric-iris);
+  color: var(--color-bone-white);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-electric-iris);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* --- レイアウトの器 ------------------------------------------------------- */
+
+.shell {
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  position: relative;
+  padding-block: var(--section-y);
+}
+
+/* --- パーティクル場 ------------------------------------------------------- */
+
+.field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.field canvas {
+  width: 100%;
+  height: 100%;
+  /* 矩形で断ち切られないよう、外周を溶かす */
+  -webkit-mask-image: radial-gradient(
+    ellipse 95% 98% at var(--field-x, 52%) 50%,
+    #000 55%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 95% 98% at var(--field-x, 52%) 50%,
+    #000 55%,
+    transparent 100%
+  );
+}
+
+/* --- 文字のプリミティブ --------------------------------------------------- */
+
+.eyebrow {
+  display: block;
+  font-size: var(--text-nav-label);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-nav-label);
+  letter-spacing: 0.14em;
+  color: var(--color-saffron-spark);
+  margin: 0;
+}
+
+.display {
+  font-size: var(--step-display);
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+}
+
+.headline {
+  font-size: var(--step-heading-lg);
+  line-height: 1.14;
+  letter-spacing: -0.03em;
+}
+
+.subhead {
+  font-size: var(--step-subheading);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  font-size: var(--step-lead);
+  line-height: 1.85;
+  color: var(--color-bone-white);
+}
+
+.prose {
+  font-size: var(--step-body);
+  line-height: 1.95;
+  color: var(--color-silver-mist);
+}
+
+.prose > p + p {
+  margin-top: 1.4em;
+}
+
+.kicker {
+  font-size: var(--step-subheading);
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+  font-weight: var(--font-weight-regular);
+}
+
+.muted {
+  color: var(--color-ash-gray);
+}
+
+.caption {
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+  letter-spacing: 0.1em;
+  color: var(--color-ash-gray);
+}
+
+/*
+  和文見出しの折り返し制御。文節をこれで包むと、幅が変わっても語中で切れない。
+  <br> だけでは画面幅に追従できないため、両方を併用する。
+*/
+.nb {
+  white-space: nowrap;
+}
+
+.numeral {
+  /* 数字と欧文だけは Inter に固定して、和文フォントの数字が混ざらないようにする */
+  font-family: 'Inter', var(--font-ppneuemontreal);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- 唯一の塗りボタン ----------------------------------------------------- */
+
+.pill {
+  --pill-bg: var(--color-electric-iris);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.9rem 1.5rem;
+  border-radius: var(--radius-full);
+  background: var(--pill-bg);
+  color: var(--color-bone-white);
+  font-size: var(--text-nav-label);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.08em;
+  line-height: 1;
+  transition: background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.pill:hover {
+  /* 明るくすると白文字のコントラストが 3.5:1 まで落ちるので、逆に濃くする */
+  --pill-bg: #6a37ff;
+  transform: translateY(-2px);
+}
+
+.pill:active {
+  transform: translateY(0);
+}
+
+.pill__arrow {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pill:hover .pill__arrow {
+  transform: translateX(4px);
+}
+
+/* --- 下線が伸びるゴーストリンク ------------------------------------------- */
+
+.ghost {
+  position: relative;
+  display: inline-block;
+  font-size: var(--text-nav-label);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0.06em;
+  color: var(--color-ash-gray);
+  padding-bottom: 0.35em;
+  transition: color 0.3s ease;
+}
+
+.ghost::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ghost:hover {
+  color: var(--color-bone-white);
+}
+
+.ghost:hover::after {
+  transform: scaleX(1);
+}
+
+/* --- スクロール連動の出現 ------------------------------------------------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* JS が動かない環境では隠したままにしない */
+.no-js .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- 支援技術向け --------------------------------------------------------- */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -110%);
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-electric-iris);
+  color: var(--color-bone-white);
+  font-size: var(--text-nav-label);
+  border-radius: 0 0 var(--radius-3xl) var(--radius-3xl);
+  transition: transform 0.25s ease;
+}
+
+.skip-link:focus {
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

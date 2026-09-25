@@ -1,0 +1,121 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { brand, meta as siteMeta } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** 検索結果に出す必要がないページで false にする */
+  indexable?: boolean;
+  /** JSON-LD を追加したいページから渡す */
+  schema?: unknown[];
+}
+
+const {
+  title = siteMeta.title,
+  description = siteMeta.description,
+  indexable = true,
+  schema = [],
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', Astro.site).href;
+const ogImage = new URL(siteMeta.ogImage, Astro.site).href;
+
+const organization = {
+  '@type': 'Organization',
+  '@id': `${Astro.site}#organization`,
+  name: brand.nameJa,
+  alternateName: brand.mark,
+  description: siteMeta.description,
+  url: Astro.site?.href,
+  logo: new URL('/logo.svg', Astro.site).href,
+  foundingDate: brand.founded,
+  parentOrganization: {
+    '@type': 'CollegeOrUniversity',
+    name: '同志社大学',
+    sameAs: 'https://www.doshisha.ac.jp/',
+  },
+  areaServed: { '@type': 'Place', name: '京都府' },
+  address: {
+    '@type': 'PostalAddress',
+    addressRegion: '京都府',
+    addressLocality: '京都市',
+    addressCountry: 'JP',
+  },
+  knowsAbout: ['学生起業', 'ソフトウェア開発', 'スタートアップ', 'Webサービス開発'],
+};
+
+const website = {
+  '@type': 'WebSite',
+  '@id': `${Astro.site}#website`,
+  url: Astro.site?.href,
+  name: `${brand.nameJa} ${brand.mark}`,
+  inLanguage: 'ja',
+  publisher: { '@id': `${Astro.site}#organization` },
+};
+
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [organization, website, ...schema],
+};
+---
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {!indexable && <meta name="robots" content="noindex, follow" />}
+
+    <meta name="theme-color" content="#000000" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={brand.nameJa} />
+    <meta property="og:locale" content={brand.locale} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@200..600&family=Noto+Sans+JP:wght@200..600&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@200..600&family=Noto+Sans+JP:wght@200..600&display=swap"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(graph)} is:inline />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">本文へスキップ</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

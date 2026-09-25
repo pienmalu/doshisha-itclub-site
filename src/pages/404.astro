@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import { brand } from '../data/site';
+---
+
+<Base
+  title={`ページが見つからない｜${brand.nameJa}`}
+  description="指定されたページは存在しない。"
+  indexable={false}
+>
+  <section class="section notfound">
+    <div class="shell">
+      <p class="eyebrow">404</p>
+      <h1 class="headline notfound__title"><span class="nb">その先には、</span><span class="nb">何もない。</span></h1>
+      <p class="prose notfound__body">
+        指定されたページは存在しないか、すでに消えている。
+      </p>
+      <a class="pill notfound__cta" href="/">
+        トップへ戻る
+        <span class="pill__arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .notfound {
+    min-height: 70svh;
+    display: grid;
+    align-content: center;
+    padding-top: 8rem;
+  }
+
+  .notfound__title {
+    margin-top: clamp(1rem, 0.75rem + 1vw, 1.75rem);
+  }
+
+  .notfound__body {
+    margin-top: 1.5rem;
+    max-width: 26em;
+  }
+
+  .notfound__cta {
+    margin-top: 2.5rem;
+  }
+</style>

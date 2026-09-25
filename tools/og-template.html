@@ -1,0 +1,74 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&family=Noto+Sans+JP:wght@200;400&display=swap">
+<style>
+  *{box-sizing:border-box;margin:0}
+  html,body{width:1200px;height:630px}
+  body{background:#000;color:#fff;font-family:Inter,'Noto Sans JP',sans-serif;
+       font-feature-settings:'palt' 1;position:relative;overflow:hidden}
+  canvas{position:absolute;inset:0 -120px 0 380px}
+  .wrap{position:relative;padding:72px 80px;height:100%;display:flex;flex-direction:column;justify-content:space-between}
+  .eyebrow{font-size:16px;font-weight:600;letter-spacing:.16em;color:#ffb829}
+  h1{font-size:82px;font-weight:400;letter-spacing:-.035em;line-height:1.08;max-width:16em}
+  .foot{display:flex;align-items:center;gap:14px;font-size:16px;font-weight:600;letter-spacing:.16em}
+  svg{width:26px;height:26px}
+  .sub{font-size:19px;font-weight:200;color:#bdbdbd;letter-spacing:.02em;margin-top:22px}
+</style></head>
+<body>
+<canvas id="c"></canvas>
+<div class="wrap">
+  <div class="eyebrow">同志社大学公認団体 — EST. 2019</div>
+  <div>
+    <h1>匿名のまま、<br>事業をつくる。</h1>
+    <div class="sub">同志社IT起業サークル / 学部・学年・IT経験は問わない。審査もない。</div>
+  </div>
+  <div class="foot">
+    <svg viewBox="0 0 24 24"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8052ff"/><stop offset="1" stop-color="#15846e"/></linearGradient></defs>
+    <path d="M12.2 1.5 L21.5 22 L12.2 22 Z" fill="url(#g)"/>
+    <path d="M9.4 8.6 L2.5 22 L9.4 22 Z" fill="none" stroke="#8052ff" stroke-width="1.3"/></svg>
+    <span>ANON.VENTURES</span>
+  </div>
+</div>
+<script>
+  const PAL=[['#8052ff',30],['#a78bfa',20],['#5b8dff',16],['#e05cff',10],['#ffb829',9],['#4fd1c5',8],['#15846e',7]];
+  const BIAS=[0,4,1,3,2,5,6];
+  const LOBES=[[0,0,.30,1],[.22,-.18,.24,.85],[-.24,.16,.26,.80],[.40,.27,.19,.55],[-.43,-.25,.18,.50],[.11,.45,.16,.34],[-.12,-.47,.15,.30],[.58,-.05,.13,.22],[0,0,.74,.15]];
+  const TILT=-0.21;
+  function rng(seed){let a=seed>>>0;return()=>{a=(a+0x6d2b79f5)>>>0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
+  function fil(x,y){return .62+.26*Math.sin(x*4.7+y*2.9)*Math.sin(x*-2.3+y*5.1+1.7)+.12*Math.sin(x*8.9-y*7.3+4.1);}
+  function den(x,y){const c=Math.cos(TILT),s=Math.sin(TILT);const rx=x*c-y*s,ry=x*s+y*c;let t=0;
+    for(const[lx,ly,sg,w]of LOBES){const dx=rx-lx,dy=ry-ly;t+=w*Math.exp(-(dx*dx+dy*dy)/(2*sg*sg));}return t;}
+  const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+  const W=cv.offsetWidth,H=cv.offsetHeight,DPR=2;
+  cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);
+  const rand=rng(20190401),peak=den(0,0),tot=PAL.reduce((a,b)=>a+b[1],0);
+  const short=Math.min(W,H),scale=short*0.70,ox=W*0.52,oy=H*0.5;
+  const pts=[];let guard=0;
+  while(pts.length<2400&&guard<900000){guard++;
+    const x=(rand()*2-1)*1.12,y=(rand()*2-1)*1.12;
+    const d=den(x,y)*fil(x,y);
+    if(rand()>Math.pow(Math.max(0,d)/peak,0.72))continue;
+    const z=rand(),bias=Math.min(1,d/0.85);
+    let acc=0,target=Math.pow(rand(),1+bias*1.6)*tot,ci=0;
+    for(const i of BIAS){acc+=PAL[i][1];if(target<=acc){ci=i;break;}}
+    pts.push({x,y,z,r:(1.9+rand()*4.2)*(.55+z*.75),c:ci,a:rand()*Math.PI*2,
+      al:(.2+Math.pow(rand(),.7)*.75)*(.45+.55*rand())});
+  }
+  pts.sort((p,q)=>p.z-q.z);
+  ctx.lineJoin='miter';
+  for(const p of pts){
+    const [hex]=PAL[p.c];
+    const R=parseInt(hex.slice(1,3),16),G=parseInt(hex.slice(3,5),16),B=parseInt(hex.slice(5,7),16);
+    ctx.strokeStyle=`rgba(${R},${G},${B},${p.al.toFixed(3)})`;
+    ctx.lineWidth=p.al>0.6?1.25:1;
+    const x=ox+p.x*scale,y=oy+p.y*scale,r=p.r,a=p.a;
+    ctx.beginPath();
+    ctx.moveTo(x+Math.cos(a)*r,y+Math.sin(a)*r);
+    ctx.lineTo(x+Math.cos(a+2.0944)*r,y+Math.sin(a+2.0944)*r);
+    ctx.lineTo(x+Math.cos(a+4.1888)*r,y+Math.sin(a+4.1888)*r);
+    ctx.closePath();ctx.stroke();
+  }
+  document.title='ready';
+</script>
+</body></html>

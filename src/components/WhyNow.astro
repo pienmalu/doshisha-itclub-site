@@ -1,0 +1,71 @@
+---
+---
+
+<section class="section why" id="why">
+  <div class="shell why__grid">
+    <div class="why__head reveal">
+      <p class="eyebrow">01 — WHY NOW</p>
+      <h2 class="headline why__title">ITだけは、<br />学生が先に<br />はじめられる。</h2>
+    </div>
+
+    <div class="why__body">
+      <div class="prose reveal" style="--reveal-delay:80ms">
+        <p>
+          飲食店を開くには物件がいる。製造業には工場がいる。ITに必要なのは、手元のノートパソコンと、月に数百円のサーバー代だけだ。
+        </p>
+        <p>
+          これは学生に有利な条件だ。資金では勝てない。だが、試行回数と、失敗しても失うものの少なさでは勝てる。Facebookは寮の部屋から出た。MicrosoftもGoogleも、在学中に書いたコードが始まりだった。彼らが特別だったからではない。学生のうちに手を動かしたからだ。
+        </p>
+      </div>
+
+      <p class="kicker why__kicker reveal" style="--reveal-delay:180ms">
+        就職すれば、時間の値段は上がる。<br />
+        いま動く原価は、<span class="why__mark">生涯でいちばん安い</span>。
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .why__grid {
+    display: grid;
+    gap: clamp(2.5rem, 1.5rem + 5vw, 6rem);
+  }
+
+  .why__title {
+    margin-top: clamp(1rem, 0.75rem + 1vw, 1.75rem);
+  }
+
+  .why__body {
+    display: grid;
+    gap: clamp(2.5rem, 2rem + 3vw, 4rem);
+  }
+
+  .why__kicker {
+    max-width: 24em;
+  }
+
+  .why__mark {
+    color: var(--color-saffron-spark);
+  }
+
+  @media (min-width: 1000px) {
+    .why__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      align-items: start;
+    }
+
+    .why__head {
+      position: sticky;
+      top: 8rem;
+    }
+
+    .why__body {
+      padding-top: 0.6rem;
+    }
+
+    .prose {
+      max-width: 32em;
+    }
+  }
+</style>

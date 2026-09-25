@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import WhyNow from '../components/WhyNow.astro';
+import Proof from '../components/Proof.astro';
+import Gate from '../components/Gate.astro';
+import Anonymous from '../components/Anonymous.astro';
+import Inside from '../components/Inside.astro';
+import Faq from '../components/Faq.astro';
+import Join from '../components/Join.astro';
+import { faq } from '../data/site';
+
+const faqSchema = {
+  '@type': 'FAQPage',
+  '@id': `${Astro.site}#faq`,
+  mainEntity: faq.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
+---
+
+<Base schema={[faqSchema]}>
+  <Hero />
+  <WhyNow />
+  <Proof />
+  <Gate />
+  <Anonymous />
+  <Inside />
+  <Faq />
+  <Join />
+</Base>
