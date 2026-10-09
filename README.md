@@ -1,8 +1,10 @@
 # 同志社IT起業サークル — サイト
 
-同志社大学公認のIT起業サークルの公開サイト。Astro による静的サイトで、`dist/` をそのまま配信できる。
+https://doshisha-itclub.com
 
-デザインは `design-system/` を正本とする。純黒のキャンバス、単一のバイオレット（Electric Iris）をアクションに限って使い、見出しは太字にせず大きさと字間で階層を作る。カード・境界線・影は置かない。ヒーローの輪郭三角形のパーティクル場が、このサイトのブランドそのものである。
+同志社大学公認のIT起業サークルの公開サイト。Astro による静的な1ページ構成。
+
+中心の演出は、スクロールでパーティクルの「0」が「1」に変わるヒーロー。「アイデアのままでは0、世に出してはじめて1」というサイトの主張をそのまま形にしている。色とトークンは `design-system/` を正本とする（純黒の面に、行動を促す箇所だけバイオレット）。
 
 ## 使い方
 
@@ -10,86 +12,57 @@
 npm install
 npm run dev      # http://localhost:4321
 npm run build    # dist/ に出力
-npm run preview  # dist/ を確認
 npm run check    # 型と Astro の検査
 npm run audit    # dist を配信して axe-core で検査（ローカルの Chrome を使う）
+npm run deploy   # ビルドして Cloudflare Pages に公開
 ```
 
-本番のドメインは環境変数で渡す。canonical・OG・sitemap.xml・robots.txt がすべてこの値を基準に生成される。
+`npm run deploy` は初回だけ `npx wrangler login` で Cloudflare にログインしておく。
 
-```bash
-SITE_URL=https://example.jp npm run build
-```
+## 文言と事実
 
-## 公開前に差し替えるもの
+内容はすべて [`src/data/site.ts`](src/data/site.ts) にある。
 
-内容はすべて [`src/data/site.ts`](src/data/site.ts) に集約している。以下は仮の値なので、実際の値に置き換える。
+- 事実として載せているのは、公式 X（@doshisha_itclub）のプロフィールにある内容だけ（大学公認、学年・学部不問、他大学・社会人歓迎、入会費無料、2026年4月始動、起業実績あり）。
+- 「考え方」などの文言は X の投稿の主張を元にしている。人を下げる言い方と、確かめられない金額は載せない。
+- 数字や実績を足すときは、確かめられる値にする。検索結果とSNSにそのまま出る。
 
-| 場所 | 項目 | 現在の仮値 |
-|---|---|---|
-| `brand.mark` | 視覚的なワードマーク | `DOSHISHA IT` |
-| `brand.nameJa` | 検索に出したい正式名称 | 同志社IT起業サークル |
-| `brand.founded` | 設立年 | 2019 |
-| `stats` | 設立・在籍・法人化・選考 | 2019年 / 42名 / 3社 / なし |
-| `ventures` | 起業実績（3件） | 受託→法人化、学内SaaS、事業譲渡 |
-| `gates` | 参加条件の説明文 | 未経験が半数、文系が多数 など |
-| `activities` | 活動の中身と頻度 | 定例会・もくもく会 ほか |
-| `faq[5].a` | 会費 | 月500円 |
-| `links.join` | **入会フォームのURL（最重要）** | `https://forms.gle/PLACEHOLDER` |
-| `links.x` / `links.discord` / `links.mail` | 連絡先 | PLACEHOLDER |
-| `media.inside` | 活動写真 | `public/images/inside.svg`（プレースホルダー） |
-| `public/og.png` | SNS共有画像 1200×630 | 生成済み。名称変更時は作り直す |
+入会の導線は LINE のグループ（`links.join`）。URL を変えると、ボタンと QR コードがビルド時に作り直される。
 
-`links` の値を空文字にすると、フッターのその行は出力されない。
+## 公開の構成
 
-数値と実績は検索結果とSNSに出る。**事実と異なる値のまま公開しない。** 実績は活動内容が伝わる範囲で記載し、社名やサービス名の公開は当事者と相談して決める。
-
-画像を差し替えるときは `public/images/` に置き、`media.inside` の `src` / `width` / `height` / `alt` を実寸に合わせて更新する。`width` と `height` はレイアウトのずれ（CLS）を防ぐために必要。
+| 項目 | 内容 |
+|---|---|
+| ドメイン | お名前.com で取得、DNS は Cloudflare |
+| 配信 | Cloudflare Pages（プロジェクト名 `doshisha-itclub`、直接アップロード） |
+| DNS | `doshisha-itclub.com` と `www` を Pages に向けた CNAME。`www` は apex へ 301 |
+| メール | Cloudflare Email Routing（MX・SPF・DKIM のレコードは消さない） |
 
 ## 検索結果に出すための設定
 
-ビルド時に次が生成される。
+ビルド時に `robots.txt`、`sitemap-index.xml`、構造化データ（`Organization`・`WebSite`・`FAQPage`）、canonical、OG が作られる。基準のURLは `astro.config.mjs` の `site`。
 
-- `robots.txt` — `SITE_URL` を見て sitemap の場所を書く
-- `sitemap-index.xml` / `sitemap-0.xml`
-- 構造化データ（JSON-LD）— `Organization`（親組織に同志社大学）、`WebSite`、`FAQPage`（8問）
-- canonical、OG、Twitter カード
+公開後に人の手でやること。
 
-公開後にやること。
-
-1. Google Search Console にドメインを登録し、所有権を確認する
-2. `https://<ドメイン>/sitemap-index.xml` を送信する
-3. [リッチリザルトテスト](https://search.google.com/test/rich-results)で FAQ の構造化データを確認する
-4. トップページのインデックス登録をリクエストする
-
-`SITE_URL` を設定せずにビルドすると canonical が `https://example.com` を指す。**必ず設定する。**
-
-## 配信
-
-静的ファイルなので、どこでも置ける。ビルドコマンドは `npm run build`、出力は `dist`。
-
-- **Vercel / Netlify / Cloudflare Pages** — リポジトリを繋ぎ、環境変数 `SITE_URL` を設定するだけ
-- **GitHub Pages** — サブディレクトリに置く場合は `astro.config.mjs` に `base` を追加する
+1. [Google Search Console](https://search.google.com/search-console) で「ドメイン」として `doshisha-itclub.com` を登録し、表示された TXT レコードを Cloudflare の DNS に追加して所有権を確認する
+2. `https://doshisha-itclub.com/sitemap-index.xml` を送信する
+3. トップページの「インデックス登録をリクエスト」を押す
+4. Bing Webmaster Tools は Search Console からインポートできる
 
 ## 構造
 
 ```
-design-system/          デザインシステムの正本（トークンと規範）
 src/
-  data/site.ts          可変情報はすべてここ
-  styles/global.css     design-system/variables.css を読み込み、和文の扱いを足す
+  data/site.ts          文言・連絡先・FAQ
+  styles/global.css     共通の文字と部品
   layouts/Base.astro    head、構造化データ、ヘッダーとフッター
   components/           セクションごとに1ファイル
   scripts/
-    constellation.ts    パーティクル場（canvas 2D）
-    nav.ts              ヘッダーの挙動とメニュー
-    reveal.ts           スクロール連動の出現
-    counters.ts         数値の解読演出
-  pages/
-    index.astro         1ページ構成の本体
-    404.astro
-    robots.txt.ts
-public/                 画像とアイコン
+    glyph.ts            文字の形に集まるパーティクル（0 → 1）
+    motion.ts           スクロール連動（--p）、流れる帯、吸い寄せるボタン
+    reveal.ts           出現の演出、いま読んでいる項目の追跡
+    nav.ts              ヘッダーとメニュー
+public/                 アイコンと OG 画像
 tools/
   og-template.html      OG画像の元（書き出し方は tools/README.md）
   audit.mjs             npm run audit の中身
@@ -97,23 +70,15 @@ tools/
 
 ## 実装で決めたこと
 
-**和文のタイポグラフィ** — PPNeueMontreal に和文がないので、欧文は Inter、和文は Noto Sans JP に振っている。Noto Sans JP は weight 200 を持つため、デザインシステムの「本文は 200」を和文でも守れる。`font-feature-settings: 'palt' 1` で和文を詰め、`line-break: strict` で行頭に「ー」や促音が来る折り返しを防ぐ。見出しの改行は `<br>` と `.nb`（nowrap）を併用し、画面幅が変わっても語中で切れないようにしている。
+**パーティクル** — 文字をオフスクリーンに描き、塗られたピクセルから点を取る。0 と 1 で同じ数を取り、粒ごとに両方の位置を持たせる。変形の途中では一度散らしてから集め直す。1 のように面積の小さい文字では、余った粒を文字のまわりに薄く漂わせる。描画は色と濃さで最大28バッチにまとめる。画面外では止まる。
 
-**パーティクル場** — 複数のガウス葉を重ねた密度場から棄却サンプリングで粒を配置する。座標を正弦波で歪めてから評価するので、輪郭が楕円の重ね合わせに見えない。粒の一部は放射状の曲がった筋に沿わせ、線を引かずに流れを出している。描画は色×不透明度で最大35バケットにまとめ、インデックスのカウンティングソートで並べ替えてから一括で `stroke()` する。5,200粒・DPR2 で1フレーム約7.5ms。
+**スクロール連動** — sticky のセクション（ヒーロー、「使う側から、つくる側へ」）は、`motion.ts` が書き込む `--p`（0〜1）を CSS が読んで動かす。JS がなくても文章はすべて読める。
 
-**見出しの可読性** — パーティクル場は見出しの背後まで広がる。`#hero-copy` の矩形を毎フレーム読み、その内側では粒子を減光している。CSS のマスクだけでは端全体が薄くなるが、この方法なら文字のある場所だけを守れる。
+**コントラスト** — 「考え方」で読んでいない項目は見出しだけを 40% に沈める（大きな文字に必要な 3:1 を保つ）。本文は沈めない。
 
-**ヘッダーのCTA** — デザインシステムは塗りボタンを1ビューに1つに限っている。ヒーローのCTAが見えているあいだヘッダーのCTAは出さず、ヒーローを抜けてから引き継ぐ。隠れているあいだはタブ移動の対象からも外れる。
-
-**ボタンのhover** — 明るくすると白文字のコントラストが 3.5:1 まで落ちるため、逆に濃くしている（`#8052ff` → `#6a37ff`、4.6:1 → 5.8:1）。
-
-**境界線** — デザインシステムは境界線を置かない方針だが、FAQ の行だけは開閉できることを示す手掛かりが必要なので、白 8% の細線を引いている。ここだけの例外。
-
-**動きを減らす設定** — `prefers-reduced-motion: reduce` では、パーティクル場は整列後の1フレームだけを描いて停止し、出現アニメーションと数値の演出も止まる。
+**動きを減らす設定** — `prefers-reduced-motion: reduce` では、パーティクルの揺らぎ・流れる帯・吸い寄せを止め、出現の演出も省く。
 
 ## 確認済みのこと
 
 - `npm run audit` で違反 0 件・JSエラー 0 件（1440×900 / 390×844）
-- キーボードのみで全操作が可能。フォーカスリングはバイオレット
-- JavaScript を切っても内容はすべて読める（FAQ は `<details>`）
-- 初期表示の転送量は約 8KB（HTML 28KB、JS 4KB gzip、CSS 6KB）＋ フォント
+- 横スクロールなし（1440 / 390）

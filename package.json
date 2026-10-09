@@ -9,7 +9,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "audit": "node tools/audit.mjs"
+    "audit": "node tools/audit.mjs",
+    "deploy": "astro build && npx wrangler pages deploy dist --project-name doshisha-itclub --branch main"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.6.0",
