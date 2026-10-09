@@ -27,6 +27,18 @@
 
   --hairline: rgba(255, 255, 255, 0.08);
 
+  /* --- 動き ---------------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ヒーローの見出しだけは一段大きくする */
+  --step-hero: clamp(3.4rem, 1.2rem + 10vw, 8.75rem);
+
+  /* ラベル用の等幅。数字と欧文の小さな見出しに使う */
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* details の開閉で height: auto へ補間できるようにする */
+  interpolate-size: allow-keywords;
+
   color-scheme: dark;
 }
 
@@ -159,6 +171,84 @@ button {
 
 /* --- 文字のプリミティブ --------------------------------------------------- */
 
+/* 等幅の小見出し。番号を紫で前置する */
+.label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9em;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ash-gray);
+}
+
+.label__n {
+  color: var(--color-electric-iris);
+}
+
+.label__n::before {
+  content: '(';
+}
+
+.label__n::after {
+  content: ')';
+}
+
+/*
+  行ごとに下から立ち上がる見出し。.line の中の span を動かす。
+  ヒーローは読み込み直後に、.reveal-line は画面に入ったときに動く。
+*/
+.line {
+  display: block;
+  overflow: hidden;
+  /* 和文の字面がはみ出して欠けないよう、少し余白を持たせる */
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.line > span {
+  display: block;
+  transform: translateY(110%);
+}
+
+.hero .line > span {
+  animation: line-up 1.2s var(--ease-out) forwards;
+}
+
+.reveal-line > span {
+  transition: transform 1.1s var(--ease-out);
+}
+
+.reveal-line.is-in > span,
+.no-js .line > span {
+  transform: none;
+}
+
+.reveal-line:nth-child(2) > span {
+  transition-delay: 0.09s;
+}
+
+@keyframes line-up {
+  to {
+    transform: none;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .eyebrow {
   display: block;
   font-size: var(--text-nav-label);
@@ -261,6 +351,11 @@ button {
   transform: translateY(-2px);
 }
 
+.pill--lg {
+  padding: 1.15rem 2rem;
+  font-size: 1rem;
+}
+
 .pill:active {
   transform: translateY(0);
 }
@@ -328,6 +423,19 @@ button {
   transform: none;
 }
 
+/* --- 粒状のノイズ ------------------------------------------------------- */
+
+/* 純黒の面にフィルムのような粒を重ね、平板に見えないようにする */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 /* --- 支援技術向け --------------------------------------------------------- */
 
 .visually-hidden {
@@ -375,5 +483,10 @@ button {
   .reveal {
     opacity: 1;
     transform: none;
+  }
+
+  .line > span {
+    transform: none;
+    animation: none !important;
   }
 }

@@ -1,0 +1,104 @@
+---
+import { roles } from '../data/site';
+---
+
+<section class="section team" id="team" aria-labelledby="team-title">
+  <div class="shell">
+    <div class="team__head">
+      <p class="label reveal"><span class="label__n">03</span>TEAM</p>
+      <h2 class="headline team__title" id="team-title">
+        <span class="line reveal-line"><span>コードが書けなくても、</span></span>
+        <span class="line reveal-line"><span>いい。</span></span>
+      </h2>
+      <p class="prose team__lead reveal">
+        IT起業はチーム戦。全員がコードを書く必要はありません。自分の強みで勝負し、苦手なことは仲間に任せる。役割は大きく3つです。
+      </p>
+    </div>
+
+    <ul class="team__roles">
+      {
+        roles.map((role, i) => (
+          <li class="role reveal" style={`--reveal-delay:${i * 120}ms`}>
+            <span class="role__glyph" aria-hidden="true">
+              {role.glyph}
+            </span>
+            <p class="label role__en">{role.en}</p>
+            <h3 class="subhead role__title">{role.title}</h3>
+            <p class="role__body">{role.body}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .team__head {
+    max-width: 46rem;
+  }
+
+  .team__title {
+    margin-top: clamp(1rem, 0.75rem + 1vw, 1.75rem);
+  }
+
+  .team__lead {
+    margin-top: clamp(1.25rem, 1rem + 1vw, 2rem);
+    max-width: 32em;
+  }
+
+  .team__roles {
+    display: grid;
+    gap: clamp(3rem, 2rem + 3vw, 4rem) clamp(1.5rem, 1rem + 2vw, 3rem);
+    margin-top: clamp(3.5rem, 2rem + 5vw, 7rem);
+  }
+
+  .role {
+    position: relative;
+  }
+
+  /* 漢字1字を輪郭だけで大きく置く。hover で塗りが下から満ちる */
+  .role__glyph {
+    display: block;
+    font-size: clamp(7rem, 5rem + 9vw, 13rem);
+    font-weight: var(--font-weight-extralight);
+    line-height: 1;
+    color: transparent;
+    background: linear-gradient(to top, var(--color-electric-iris) 0 50%, rgba(255, 255, 255, 0.1) 50% 100%);
+    background-size: 100% 200%;
+    background-position: 0 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    transition: background-position 1.4s var(--ease-out);
+  }
+
+  .role.is-in .role__glyph {
+    background-position: 0 100%;
+  }
+
+  .role__en {
+    margin-top: 1.5rem;
+    color: var(--color-ash-gray);
+  }
+
+  .role__title {
+    margin-top: 0.5rem;
+  }
+
+  .role__body {
+    margin-top: 0.75rem;
+    color: var(--color-silver-mist);
+    line-height: 1.9;
+    max-width: 22em;
+  }
+
+  /* 塗りは「見えた」ときに一度だけ入る。順番に遅らせる */
+  .role.is-in .role__glyph {
+    transition-delay: calc(var(--reveal-delay, 0ms) + 350ms);
+  }
+
+  @media (min-width: 860px) {
+    .team__roles {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

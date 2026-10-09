@@ -1,0 +1,104 @@
+---
+import { brand, facts } from '../data/site';
+---
+
+<section class="section about" id="about" aria-labelledby="about-title">
+  <div class="shell about__grid">
+    <div class="about__head">
+      <p class="label reveal"><span class="label__n">04</span>ABOUT</p>
+      <h2 class="headline about__title" id="about-title">
+        <span class="line reveal-line"><span>{brand.nameJa}</span></span>
+      </h2>
+      <p class="prose about__lead reveal">
+        同志社大学の公認団体として、2026年4月に始動しました。アイデアを形にして世に出し、売るところまでやる。そのための仲間と環境をつくっています。
+      </p>
+    </div>
+
+    <dl class="about__facts">
+      {
+        facts.map((fact, i) => (
+          <div class="fact reveal" style={`--reveal-delay:${i * 70}ms`}>
+            <dt class="label">{fact.label}</dt>
+            <dd class="fact__value">{fact.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  .about__grid {
+    display: grid;
+    gap: clamp(3rem, 2rem + 4vw, 6rem);
+  }
+
+  .about__title {
+    margin-top: clamp(1rem, 0.75rem + 1vw, 1.75rem);
+    font-size: var(--step-heading);
+    line-height: 1.25;
+  }
+
+  .about__lead {
+    margin-top: clamp(1.25rem, 1rem + 1vw, 2rem);
+    max-width: 30em;
+  }
+
+  .about__facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fact {
+    position: relative;
+    display: grid;
+    gap: 0.75rem;
+    padding: clamp(1.25rem, 1rem + 1vw, 2rem) 0;
+    border-top: 1px solid var(--hairline);
+  }
+
+  /* 罫線が左から引かれる */
+  .fact::before {
+    content: '';
+    position: absolute;
+    inset: -1px 0 auto;
+    height: 1px;
+    background: var(--color-electric-iris);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1.2s var(--ease-out);
+    transition-delay: calc(var(--reveal-delay, 0ms) + 200ms);
+  }
+
+  .fact.is-in::before {
+    transform: scaleX(1);
+    opacity: 0.6;
+  }
+
+  .fact__value {
+    font-size: var(--step-subheading);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 1000px) {
+    .about__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      align-items: start;
+    }
+  }
+
+  @media (min-width: 600px) {
+    .about__facts {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .about__facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

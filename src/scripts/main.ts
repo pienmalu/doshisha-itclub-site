@@ -1,11 +1,12 @@
-import { initConstellations } from './constellation';
-import { initReveal } from './reveal';
+import { initReveal, initSpy } from './reveal';
 import { initNav } from './nav';
-import { initCounters } from './counters';
+import { initMotion } from './motion';
+import { initGlyphFields } from './glyph';
 
 document.documentElement.classList.remove('no-js');
 
 initReveal();
+initSpy();
 initNav();
-initCounters();
-initConstellations();
+initMotion();
+void initGlyphFields();

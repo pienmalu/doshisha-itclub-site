@@ -1,0 +1,147 @@
+---
+import { shift } from '../data/site';
+---
+
+<!--
+  sticky の区間をスクロールすると、行が上から順に「使う側」から「つくる側」へ
+  切り替わる。--p は motion.ts が書き込む。JS がなくても両方の文は読める。
+-->
+<section class="shift" id="shift" aria-labelledby="shift-title" data-progress style={`--n:${shift.length}`}>
+  <div class="shift__sticky">
+    <div class="shell">
+      <p class="label"><span class="label__n">02</span>SHIFT</p>
+      <h2 class="headline shift__title" id="shift-title">
+        <span class="nb">使う側から、</span><span class="nb shift__accent">つくる側へ。</span>
+      </h2>
+
+      <div class="shift__table" role="table" aria-label="使う側とつくる側の違い">
+        <div class="shift__head" role="row">
+          <span class="label" role="columnheader">使う側</span>
+          <span class="label" role="columnheader">つくる側</span>
+        </div>
+        {
+          shift.map((row, i) => (
+            <div class="shift__row" role="row" style={`--i:${i}`}>
+              <span class="shift__from" role="cell">
+                <span class="shift__strike">{row.from}</span>
+              </span>
+              <span class="shift__arrow" aria-hidden="true">→</span>
+              <span class="shift__to" role="cell">{row.to}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .shift {
+    position: relative;
+    height: 260svh;
+  }
+
+  .shift__sticky {
+    position: sticky;
+    top: 0;
+    min-height: 100svh;
+    display: grid;
+    align-items: center;
+    padding-block: 6rem 3rem;
+  }
+
+  .shift__title {
+    margin-top: clamp(1rem, 0.75rem + 1vw, 1.75rem);
+  }
+
+  /* 見出しの「つくる側へ。」は進み具合に合わせて色が満ちる */
+  .shift__accent {
+    background: linear-gradient(90deg, var(--color-bone-white) 0 50%, rgba(255, 255, 255, 0.22) 50% 100%);
+    background-size: 200% 100%;
+    background-position: calc(100% - var(--p, 1) * 100%) 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .shift__table {
+    margin-top: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+    display: grid;
+  }
+
+  .shift__head {
+    display: none;
+  }
+
+  .shift__row {
+    /* 行ごとの進み具合 0〜1。全体の --p を行数で区切る */
+    --r: clamp(0, calc(var(--p, 1) * (var(--n) + 0.6) - var(--i) - 0.3), 1);
+    display: grid;
+    gap: 0.35rem;
+    padding-block: clamp(0.9rem, 0.7rem + 0.8vw, 1.5rem);
+    border-top: 1px solid var(--hairline);
+  }
+
+  .shift__from {
+    color: color-mix(in srgb, var(--color-silver-mist), transparent calc(var(--r) * 55%));
+    font-size: var(--step-body);
+  }
+
+  /* 取り消し線が左から引かれる */
+  .shift__strike {
+    background: linear-gradient(var(--color-electric-iris), var(--color-electric-iris)) no-repeat 0 55% /
+      calc(var(--r) * 100%) 1px;
+  }
+
+  .shift__arrow {
+    display: none;
+  }
+
+  .shift__to {
+    font-size: var(--step-subheading);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+    opacity: calc(0.18 + var(--r) * 0.82);
+    transform: translateX(calc((1 - var(--r)) * 1.25rem));
+  }
+
+  @media (min-width: 860px) {
+    .shift__head {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) 3rem minmax(0, 7fr);
+      padding-bottom: 1rem;
+    }
+
+    .shift__head > :last-child {
+      grid-column: 3;
+    }
+
+    .shift__row {
+      grid-template-columns: minmax(0, 5fr) 3rem minmax(0, 7fr);
+      align-items: baseline;
+      column-gap: 0;
+    }
+
+    .shift__arrow {
+      display: block;
+      color: var(--color-electric-iris);
+      opacity: var(--r);
+    }
+  }
+
+  @media (max-width: 859px) {
+    .shift {
+      height: 220svh;
+    }
+  }
+
+  /* JS がないとき、動きを減らす設定のときは、切り替わった状態で見せる */
+  :global(.no-js) .shift {
+    height: auto;
+  }
+
+  :global(.no-js) .shift__sticky {
+    position: static;
+  }
+</style>

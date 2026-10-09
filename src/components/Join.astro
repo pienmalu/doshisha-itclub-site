@@ -1,97 +1,141 @@
 ---
-import { joinSteps, links } from '../data/site';
+import QRCode from 'qrcode';
+import { links } from '../data/site';
+
+// 画面の大きい端末から来た人は、手元のスマホで読み取って LINE を開く
+const qr = links.join
+  ? await QRCode.toString(links.join, {
+      type: 'svg',
+      margin: 0,
+      errorCorrectionLevel: 'M',
+      color: { dark: '#ffffff', light: '#00000000' },
+    })
+  : '';
 ---
 
-<section class="section join" id="join">
+<section class="section join" id="join" aria-labelledby="join-title">
+  <div class="field" aria-hidden="true">
+    <canvas
+      data-glyph-field
+      data-glyphs="1"
+      data-guard="#join-copy"
+      data-seed="20260409"
+      data-x="0.78"
+      data-scale="0.62"
+      data-y-narrow="0.3"
+      data-scale-narrow="0.75"></canvas>
+  </div>
+
   <div class="shell join__inner">
-    <p class="eyebrow reveal">07 — JOIN</p>
-    <h2 class="display join__title reveal" style="--reveal-delay:60ms">
-      <span class="nb">まずは、</span><br /><span class="nb">見に来てほしい。</span>
-    </h2>
+    <div class="join__copy" id="join-copy">
+      <p class="label reveal"><span class="label__n">06</span>JOIN</p>
+      <h2 class="display join__title" id="join-title">
+        <span class="line reveal-line"><span>次の1を、</span></span>
+        <span class="line reveal-line"><span>ここから。</span></span>
+      </h2>
+      <p class="lead join__lead reveal">
+        入会はLINEのグループから。<span class="nb">質問だけでも構いません。</span>
+      </p>
 
-    <ol class="join__steps">
+      <div class="join__actions reveal">
+        {
+          links.join && (
+            <a class="pill pill--lg" href={links.join} target="_blank" rel="noopener" data-magnetic>
+              LINEで参加する
+              <span class="pill__arrow" aria-hidden="true">→</span>
+            </a>
+          )
+        }
+        {
+          links.instagram && (
+            <a class="ghost" href={links.instagram} target="_blank" rel="noopener">
+              Instagramで活動を見る
+            </a>
+          )
+        }
+      </div>
       {
-        joinSteps.map((step, i) => (
-          <li class="join__step reveal" style={`--reveal-delay:${140 + i * 90}ms`}>
-            <span class="join__n numeral">{step.n}</span>
-            <h3 class="join__step-title">{step.title}</h3>
-            <p class="join__step-body">{step.body}</p>
-          </li>
-        ))
+        qr && (
+          <figure class="join__qr reveal">
+            <div class="join__qr-code" set:html={qr} />
+            <figcaption class="caption">スマートフォンで読み取ると、LINEのグループが開きます。</figcaption>
+          </figure>
+        )
       }
-    </ol>
-
-    <div class="join__cta reveal" style="--reveal-delay:420ms">
-      <a class="pill join__pill" href={links.join} rel="noopener">
-        参加フォームを開く
-        <span class="pill__arrow" aria-hidden="true">→</span>
-      </a>
-      <p class="join__note">通年で受け付けている。学期の途中でも構わない。</p>
     </div>
+
   </div>
 </section>
 
 <style>
   .join {
     position: relative;
-    /* 主要な CTA の直後なので、下の余白はフッターまでの間だけに絞る */
-    padding-bottom: clamp(4rem, 3rem + 4vw, 6rem);
+    overflow: hidden;
+    min-height: min(100svh, 56rem);
+    padding-block: clamp(4rem, 3rem + 4vw, 7rem);
+    display: grid;
+    align-items: center;
+  }
+
+  .join__inner {
+    position: relative;
+  }
+
+  .join__copy {
+    max-width: 40rem;
   }
 
   .join__title {
-    margin-top: clamp(1.25rem, 1rem + 1vw, 2rem);
+    margin-top: clamp(1rem, 0.75rem + 1vw, 1.75rem);
   }
 
-  .join__steps {
-    display: grid;
-    gap: clamp(2.5rem, 2rem + 2vw, 3.5rem);
-    margin-top: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+  .join__lead {
+    margin-top: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
   }
 
-  .join__n {
-    display: block;
-    font-size: var(--text-caption);
-    letter-spacing: 0.2em;
-    color: var(--color-electric-iris);
-  }
-
-  .join__step-title {
-    margin-top: 0.9rem;
-    font-size: var(--text-heading-2xs);
-    letter-spacing: var(--tracking-heading-2xs);
-    line-height: 1.3;
-  }
-
-  .join__step-body {
-    margin-top: 0.7rem;
-    color: var(--color-silver-mist);
-    line-height: 1.9;
-    max-width: 22em;
-  }
-
-  .join__cta {
+  .join__actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: clamp(1.5rem, 1rem + 2vw, 2.5rem);
-    margin-top: clamp(3.5rem, 2.5rem + 4vw, 5.5rem);
+    gap: var(--spacing-24) var(--spacing-36);
+    margin-top: clamp(2rem, 1.5rem + 1.5vw, 3rem);
   }
 
-  .join__pill {
-    padding: 1.1rem 1.9rem;
+  .join__qr {
+    display: none;
+    align-items: center;
+    gap: 1.25rem;
+    margin: clamp(2.5rem, 2rem + 2vw, 3.5rem) 0 0;
   }
 
-  .join__note {
-    max-width: 24em;
-    font-size: var(--text-nav-label);
-    letter-spacing: 0.04em;
-    line-height: 1.8;
-    color: var(--color-ash-gray);
+  .join__qr-code {
+    flex: none;
+    width: 6.5rem;
+    padding: 0.9rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: inset 0 0 0 1px var(--hairline);
   }
 
-  @media (min-width: 760px) {
-    .join__steps {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+  .join__qr-code :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+
+  .join__qr figcaption {
+    max-width: 14em;
+  }
+
+  /* QR はポインタのある大きい画面だけ。スマホで見ている人には意味がない */
+  @media (min-width: 1000px) and (pointer: fine) {
+    .join__qr {
+      display: flex;
+    }
+  }
+
+  @media (max-width: 859px) {
+    .join {
+      align-items: end;
     }
   }
 </style>

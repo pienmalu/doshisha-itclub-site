@@ -26,7 +26,7 @@ const to = (hash: string) => (isHome ? hash : `/${hash}`);
     </nav>
 
     <div class="header__actions">
-      <a class="pill header__cta" href={links.join} rel="noopener">
+      <a class="pill header__cta" href={links.join} target="_blank" rel="noopener">
         参加する
         <span class="pill__arrow" aria-hidden="true">→</span>
       </a>
@@ -59,7 +59,7 @@ const to = (hash: string) => (isHome ? hash : `/${hash}`);
         ))
       }
     </ul>
-    <a class="pill menu__cta" href={links.join} rel="noopener">
+    <a class="pill menu__cta" href={links.join} target="_blank" rel="noopener">
       参加する
       <span class="pill__arrow" aria-hidden="true">→</span>
     </a>

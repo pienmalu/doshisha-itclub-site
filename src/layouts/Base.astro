@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { brand, meta as siteMeta } from '../data/site';
+import { brand, links, meta as siteMeta } from '../data/site';
 
 interface Props {
   title?: string;
@@ -32,6 +32,8 @@ const organization = {
   url: Astro.site?.href,
   logo: new URL('/logo.svg', Astro.site).href,
   foundingDate: brand.founded,
+  email: links.mail || undefined,
+  sameAs: [links.instagram].filter(Boolean),
   parentOrganization: {
     '@type': 'CollegeOrUniversity',
     name: '同志社大学',
@@ -44,14 +46,15 @@ const organization = {
     addressLocality: '京都市',
     addressCountry: 'JP',
   },
-  knowsAbout: ['学生起業', 'ソフトウェア開発', 'スタートアップ', 'Webサービス開発'],
+  knowsAbout: ['学生起業', 'IT起業', 'ソフトウェア開発', 'スタートアップ', 'Webサービス開発'],
 };
 
 const website = {
   '@type': 'WebSite',
   '@id': `${Astro.site}#website`,
   url: Astro.site?.href,
-  name: `${brand.nameJa} ${brand.mark}`,
+  name: brand.nameJa,
+  alternateName: brand.mark,
   inLanguage: 'ja',
   publisher: { '@id': `${Astro.site}#organization` },
 };
@@ -98,11 +101,11 @@ const graph = {
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@200..600&family=Noto+Sans+JP:wght@200..600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@200..600&family=JetBrains+Mono:wght@400&family=Noto+Sans+JP:wght@200..600&display=swap"
     />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@200..600&family=Noto+Sans+JP:wght@200..600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@200..600&family=JetBrains+Mono:wght@400&family=Noto+Sans+JP:wght@200..600&display=swap"
     />
 
     <script type="application/ld+json" set:html={JSON.stringify(graph)} is:inline />

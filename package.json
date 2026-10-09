@@ -13,10 +13,12 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.6.0",
-    "astro": "^5.16.0"
+    "astro": "^5.16.0",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@types/qrcode": "^1.5.5",
     "axe-core": "^4.13.0",
     "playwright": "^1.63.0",
     "typescript": "^5.9.3"

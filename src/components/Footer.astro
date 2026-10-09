@@ -1,5 +1,4 @@
 ---
-import Logo from './Logo.astro';
 import { brand, nav, links } from '../data/site';
 
 const year = new Date().getFullYear();
@@ -9,16 +8,15 @@ const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '';
 const to = (hash: string) => (isHome ? hash : `/${hash}`);
 
 const externals = [
-  { label: 'X', href: links.x },
-  { label: 'Discord', href: links.discord },
-  { label: 'Mail', href: links.mail ? `mailto:${links.mail}` : '' },
+  { label: 'LINE（入会）', href: links.join, external: true },
+  { label: `Instagram ${links.instagramHandle}`, href: links.instagram, external: true },
+  { label: links.mail, href: links.mail ? `mailto:${links.mail}` : '', external: false },
 ].filter((item) => item.href.length > 0);
 ---
 
 <footer class="footer">
   <div class="shell footer__inner">
     <div class="footer__brand">
-      <Logo label={brand.mark} />
       <p class="footer__legal">
         {brand.nameJa}<br />
         <span class="muted">同志社大学公認団体 / 京都</span>
@@ -26,44 +24,52 @@ const externals = [
     </div>
 
     <nav class="footer__nav" aria-label="フッター">
-      <p class="caption footer__label">SITE</p>
+      <p class="label footer__label">SITE</p>
       <ul>
         {nav.map((item) => <li><a class="footer__link" href={to(item.href)}>{item.label}</a></li>)}
-        <li><a class="footer__link" href={to("#join")}>参加する</a></li>
+        <li><a class="footer__link" href={to('#join')}>参加する</a></li>
       </ul>
     </nav>
 
-    {
-      externals.length > 0 && (
-        <nav class="footer__nav" aria-label="外部リンク">
-          <p class="caption footer__label">CONTACT</p>
-          <ul>
-            {externals.map((item) => (
-              <li>
-                <a class="footer__link" href={item.href} rel="noopener noreferrer" target="_blank">
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )
-    }
-
-    <p class="footer__mark"><span class="nb">小さく試して、</span><span class="nb">次へ進む。</span></p>
+    <nav class="footer__nav" aria-label="連絡先">
+      <p class="label footer__label">CONTACT</p>
+      <ul>
+        {
+          externals.map((item) => (
+            <li>
+              <a
+                class="footer__link"
+                href={item.href}
+                {...(item.external ? { target: '_blank', rel: 'noopener' } : {})}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
   </div>
 
+  <!-- 画面幅いっぱいのワードマーク。下から一文字ずつ立ち上がる -->
+  <p class="footer__word" aria-hidden="true" data-reveal>
+    {
+      [...'DOSHISHA IT CLUB'].map((ch, i) => (
+        <span class="footer__ch" style={`--i:${i}`}>{ch === ' ' ? ' ' : ch}</span>
+      ))
+    }
+  </p>
+
   <div class="shell footer__base">
-    <p class="caption">© <span class="numeral">{year}</span> {brand.mark}</p>
-    <p class="caption muted">
-      同志社大学および学校法人同志社の公式サイトではない。学生団体が運営している。
-    </p>
+    <p class="caption">© <span class="numeral">{year}</span> {brand.nameJa}</p>
+    <p class="caption">同志社大学の公式サイトではありません。学生団体が運営しています。</p>
   </div>
 </footer>
 
 <style>
   .footer {
     padding-block: clamp(3.5rem, 2.5rem + 4vw, 6rem) clamp(2rem, 1.5rem + 2vw, 3rem);
+    overflow: hidden;
   }
 
   .footer__inner {
@@ -72,14 +78,12 @@ const externals = [
   }
 
   .footer__legal {
-    margin-top: 1.1rem;
     font-size: var(--text-nav-label);
     line-height: 1.7;
     letter-spacing: 0.04em;
   }
 
   .footer__label {
-    letter-spacing: 0.2em;
     margin-bottom: 1.1rem;
   }
 
@@ -91,7 +95,7 @@ const externals = [
   .footer__link {
     font-size: var(--text-nav-label);
     color: var(--color-ash-gray);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     transition: color 0.3s ease;
   }
 
@@ -99,12 +103,34 @@ const externals = [
     color: var(--color-bone-white);
   }
 
-  .footer__mark {
-    font-size: var(--step-subheading);
-    line-height: 1.35;
-    letter-spacing: -0.02em;
-    font-weight: var(--font-weight-regular);
-    max-width: 14em;
+  .footer__word {
+    display: flex;
+    justify-content: center;
+    margin-top: clamp(2.5rem, 2rem + 3vw, 4rem);
+    font-family: 'Inter', var(--font-ppneuemontreal);
+    font-size: 10.4vw;
+    font-weight: var(--font-weight-extralight);
+    line-height: 0.82;
+    letter-spacing: -0.06em;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-bottom: 0.04em;
+  }
+
+  .footer__ch {
+    display: inline-block;
+    transform: translateY(100%);
+    transition: transform 1.2s var(--ease-out);
+    transition-delay: calc(var(--i) * 35ms);
+    background: linear-gradient(180deg, var(--color-bone-white) 30%, var(--color-electric-iris) 140%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .footer__word.is-in .footer__ch,
+  :global(.no-js) .footer__ch {
+    transform: none;
   }
 
   .footer__base {
@@ -112,18 +138,13 @@ const externals = [
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 0.75rem 2rem;
-    margin-top: clamp(3rem, 2rem + 4vw, 5rem);
+    margin-top: clamp(1.5rem, 1rem + 2vw, 2.5rem);
   }
 
   @media (min-width: 900px) {
     .footer__inner {
-      grid-template-columns: minmax(0, 4fr) minmax(0, 2fr) minmax(0, 2fr) minmax(0, 4fr);
+      grid-template-columns: minmax(0, 6fr) minmax(0, 2fr) minmax(0, 3fr);
       align-items: start;
-    }
-
-    .footer__mark {
-      text-align: right;
-      justify-self: end;
     }
   }
 </style>

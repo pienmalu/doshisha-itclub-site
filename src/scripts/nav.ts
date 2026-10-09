@@ -16,6 +16,7 @@ export function initNav() {
     .map((link) => document.querySelector<HTMLElement>(link.hash))
     .filter((el): el is HTMLElement => Boolean(el));
 
+  const hero = document.querySelector<HTMLElement>('.hero');
   let lastY = window.scrollY;
   let ticking = false;
 
@@ -23,7 +24,9 @@ export function initNav() {
     const y = window.scrollY;
     header!.classList.toggle('is-scrolled', y > 24);
     // ヒーローの CTA が画面から外れてから、ヘッダーの CTA を出す
-    header!.classList.toggle('is-past-hero', y > window.innerHeight * 0.55);
+    // ヒーローは sticky で長く留まるので、区間の終わり近くまで来てから切り替える
+    const heroEnd = hero ? hero.offsetTop + hero.offsetHeight - window.innerHeight * 1.2 : window.innerHeight * 0.55;
+    header!.classList.toggle('is-past-hero', y > heroEnd);
 
     const goingDown = y > lastY && y > 200;
     if (!menu?.classList.contains('is-open')) {

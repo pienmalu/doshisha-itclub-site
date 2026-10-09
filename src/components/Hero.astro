@@ -1,259 +1,189 @@
 ---
-import { brand, stats, links } from '../data/site';
+import { links } from '../data/site';
 ---
 
-<section class="hero">
-  <div class="field hero__field" aria-hidden="true">
-    <canvas data-constellation="hero" data-seed="20190401" data-guard="#hero-copy"></canvas>
-  </div>
-
-  <div class="hero__inner shell">
-    <div class="hero__copy" id="hero-copy">
-    <p class="eyebrow hero__eyebrow">同志社大学公認団体 — EST. {brand.founded}</p>
-
-    <h1 class="display hero__title">
-      <span class="hero__line"><span>つくって、</span></span>
-      <span class="hero__line"><span>確かめる。</span></span>
-    </h1>
-
-    <div class="hero__lead">
-      <p class="lead">同志社大学公認のIT起業サークル。学部・学年・IT経験は問わない。選考もない。</p>
-      <p class="lead">アイデアを形にし、仲間に見せる。使う人の反応を受けて、また直す。</p>
+<section class="hero" id="top" data-progress data-steps="2" aria-labelledby="hero-title">
+  <div class="hero__sticky">
+    <div class="field" aria-hidden="true">
+      <canvas
+        data-glyph-field
+        data-glyphs="0,1"
+        data-track=".hero"
+        data-guard="#hero-copy"
+        data-seed="20260401"
+        data-x="0.73"
+        data-scale="0.86"
+        data-y-narrow="0.3"
+        data-scale-narrow="0.78"></canvas>
     </div>
 
-    <div class="hero__actions">
-      <a class="pill" href={links.join} rel="noopener">
-        参加する
-        <span class="pill__arrow" aria-hidden="true">→</span>
-      </a>
-      <a class="ghost" href="#inside">活動の実際を見る</a>
+    <div class="hero__inner shell">
+      <div class="hero__copy" id="hero-copy">
+        <p class="label hero__eyebrow">同志社大学公認 / IT起業サークル</p>
+
+        <h1 class="display hero__title" id="hero-title">
+          <span class="line"><span>作って、</span></span>
+          <span class="line"><span>売る。</span></span>
+        </h1>
+
+        <p class="lead hero__lead">
+          <span class="nb">アイデアのままでは、0。</span><span class="nb">世に出して、はじめて1になる。</span><br />
+          <span class="hero__sub"><span class="nb">学年・学部・プログラミング経験は問いません。</span><span class="nb">入会費は無料です。</span></span>
+        </p>
+
+        <div class="hero__actions">
+          <a class="pill" href={links.join} target="_blank" rel="noopener" data-magnetic>
+            LINEで参加する
+            <span class="pill__arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="ghost" href="#principles">考え方を読む</a>
+        </div>
+      </div>
     </div>
 
-    <dl class="hero__stats">
-      {
-        stats.map((stat, i) => (
-          <div class="hero__stat">
-            <dt class="caption">{stat.label}</dt>
-            <dd>
-              <span class="numeral" data-scramble={i * 90}>{stat.value}</span>
-              {stat.unit && <span class="hero__unit">{stat.unit}</span>}
-            </dd>
-          </div>
-        ))
-      }
-    </dl>
+    <div class="hero__hud shell" aria-hidden="true">
+      <span class="label hero__hud-from">IDEA <b>0</b></span>
+      <span class="hero__bar"><span></span></span>
+      <span class="label hero__hud-to">PRODUCT <b>1</b></span>
+      <span class="label hero__hint">SCROLL</span>
     </div>
-  </div>
-
-  <div class="hero__cue" aria-hidden="true">
-    <span class="hero__cue-label">SCROLL</span>
-    <span class="hero__cue-line"></span>
   </div>
 </section>
 
 <style>
+  /* sticky の区間。スクロールの長さが 0 → 1 の変形の長さになる */
   .hero {
     position: relative;
-    min-height: min(100svh, 60rem);
+    height: 240svh;
+  }
+
+  .hero__sticky {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 34rem;
     display: grid;
     align-items: center;
-    padding-block: clamp(8rem, 6rem + 8vw, 12rem) clamp(5rem, 3rem + 6vw, 8rem);
     overflow: hidden;
   }
 
-  
   .hero__inner {
     position: relative;
     max-width: var(--page-max-width);
   }
 
-  /*
-    パーティクル場に「文字を守る矩形」として渡す要素。
-    見出しの実寸に合わせたいので、余白を含む .shell とは別に切る。
-  */
   .hero__copy {
-    max-width: min(46rem, 100%);
+    max-width: min(40rem, 100%);
   }
 
   .hero__eyebrow {
     opacity: 0;
-    animation: hero-in 1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+    animation: rise-in 1s var(--ease-out) 0.2s forwards;
   }
 
   .hero__title {
-    margin-top: clamp(1.25rem, 1rem + 1vw, 2rem);
-    max-width: 18em;
+    margin-top: clamp(1rem, 0.75rem + 1vw, 1.75rem);
+    font-size: var(--step-hero);
+    line-height: 1.02;
   }
 
-  /* 行ごとに下から立ち上げる。行の高さを保つため overflow は行単位で切る */
-  .hero__line {
-    display: block;
-    overflow: hidden;
+  .hero__title .line:nth-child(1) > span {
+    animation-delay: 0.3s;
   }
 
-  .hero__line > span {
-    display: block;
-    transform: translateY(105%);
-    animation: hero-rise 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-
-  .hero__line:nth-child(1) > span {
-    animation-delay: 0.22s;
-  }
-
-  .hero__line:nth-child(2) > span {
-    animation-delay: 0.34s;
+  .hero__title .line:nth-child(2) > span {
+    animation-delay: 0.42s;
   }
 
   .hero__lead {
-    display: grid;
-    gap: 0.55em;
     margin-top: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
-    max-width: 33em;
-    color: var(--color-silver-mist);
+    max-width: 32em;
     opacity: 0;
-    animation: hero-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+    animation: rise-in 1.1s var(--ease-out) 0.75s forwards;
+  }
+
+  .hero__sub {
+    display: inline-block;
+    margin-top: 0.6em;
+    color: var(--color-silver-mist);
+    font-size: 0.9em;
   }
 
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--spacing-30);
-    margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
+    gap: var(--spacing-24) var(--spacing-36);
+    margin-top: clamp(2rem, 1.5rem + 1.5vw, 2.75rem);
     opacity: 0;
-    animation: hero-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.75s forwards;
+    animation: rise-in 1.1s var(--ease-out) 0.9s forwards;
   }
 
-  .hero__stats {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, auto));
-    justify-content: start;
-    gap: clamp(1.75rem, 1rem + 4vw, 4.5rem);
-    margin-top: clamp(3.5rem, 2.5rem + 4vw, 6rem);
-    opacity: 0;
-    animation: hero-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.95s forwards;
-  }
+  /* --- 0 → 1 の進み具合 ------------------------------------------------- */
 
-  .hero__stat dt {
-    letter-spacing: 0.16em;
-  }
-
-  .hero__stat dd {
-    margin: 0.5rem 0 0;
-    display: flex;
-    align-items: baseline;
-    gap: 0.2em;
-    font-size: var(--text-heading-2xs);
-    letter-spacing: var(--tracking-heading-2xs);
-    font-weight: var(--font-weight-regular);
-  }
-
-  .hero__unit {
-    font-size: var(--text-nav-label);
-    color: var(--color-ash-gray);
-  }
-
-  .hero__cue {
+  .hero__hud {
     position: absolute;
-    right: var(--gutter);
-    bottom: clamp(1.5rem, 3vh, 3rem);
-    display: grid;
-    justify-items: center;
-    gap: 0.75rem;
+    inset: auto 0 clamp(1.25rem, 1rem + 1.5vw, 2.5rem);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-18);
     opacity: 0;
-    animation: hero-in 1.2s ease 1.4s forwards;
+    animation: rise-in 1s var(--ease-out) 1.2s forwards;
   }
 
-  .hero__cue-label {
-    font-size: 10px;
-    letter-spacing: 0.28em;
-    color: var(--color-ash-gray);
-    writing-mode: vertical-rl;
+  .hero__hud b {
+    font-weight: var(--font-weight-regular);
+    color: var(--color-bone-white);
   }
 
-  .hero__cue-line {
-    width: 1px;
-    height: 3.5rem;
-    background: linear-gradient(
-      to bottom,
-      transparent,
-      var(--color-electric-iris) 45%,
-      transparent
-    );
-    background-size: 100% 200%;
-    animation: cue-run 2.6s ease-in-out infinite;
+  .hero__hud-to {
+    color: color-mix(in srgb, var(--color-ash-gray), var(--color-bone-white) calc(var(--p, 0) * 100%));
   }
 
-  @keyframes hero-in {
-    to {
-      opacity: 1;
-    }
+  .hero__bar {
+    position: relative;
+    flex: 0 1 12rem;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.16);
+    overflow: hidden;
   }
 
-  @keyframes hero-rise {
-    to {
-      transform: none;
-    }
+  .hero__bar > span {
+    position: absolute;
+    inset: 0;
+    background: var(--color-electric-iris);
+    transform-origin: left;
+    transform: scaleX(var(--p, 0));
   }
 
-  @keyframes cue-run {
-    0% {
-      background-position: 0 -100%;
-    }
-    100% {
-      background-position: 0 100%;
-    }
+  .hero__hint {
+    margin-left: auto;
+    transition: opacity 0.4s ease;
   }
 
-  /* 塊は右半分に置き、見出しと重ならないようにする */
-  @media (min-width: 1000px) {
-    /* 塊は見出しの背後まで広げる。可読性は guard 矩形の減光が受け持つ */
-    .hero__field {
-      inset: 0 -6% 0 0;
-      --field-x: 72%;
-    }
-
-    .hero__lead {
-      max-width: 30em;
-    }
+  .hero[data-step='1'] .hero__hint {
+    opacity: 0;
   }
 
-  @media (max-width: 999px) {
-    .hero__field {
-      /* 狭い画面では文字の下にしか置けないので、余白に出る分を強めて存在感を残す */
-      opacity: 0.68;
+  @media (max-width: 859px) {
+    .hero {
+      height: 200svh;
     }
 
-    .hero__stats {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1.75rem 1.25rem;
+    /* 狭い画面では、上に文字の形、下に見出しを置く */
+    .hero__sticky {
+      align-items: end;
+      padding-bottom: clamp(5rem, 4rem + 4vw, 6.5rem);
     }
 
-    .hero__cue {
+    .hero__hint {
       display: none;
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .hero__eyebrow,
-    .hero__lead,
-    .hero__actions,
-    .hero__stats,
-    .hero__cue {
-      opacity: 1;
-      animation: none;
-    }
-
-    .hero__line > span {
-      transform: none;
-      animation: none;
-    }
-
-    .hero__cue-line {
-      animation: none;
-      background: var(--color-electric-iris);
-      opacity: 0.4;
+  @media (max-height: 640px) and (max-width: 859px) {
+    .hero__sub {
+      display: none;
     }
   }
 </style>

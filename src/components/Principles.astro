@@ -1,0 +1,153 @@
+---
+import { principles } from '../data/site';
+---
+
+<section class="section principles" id="principles" aria-labelledby="principles-title" data-spy>
+  <div class="shell principles__grid">
+    <div class="principles__aside">
+      <div class="principles__sticky">
+        <p class="label reveal"><span class="label__n">01</span>PRINCIPLES</p>
+        <h2 class="headline principles__title reveal" id="principles-title">
+          <span class="nb">5つの</span><span class="nb">考え方。</span>
+        </h2>
+        <!-- いま読んでいる項目の番号。数字が下から入れ替わる -->
+        <div class="principles__counter numeral" aria-hidden="true">
+          <span class="principles__digits">
+            {principles.map((p) => <span>{p.n}</span>)}
+          </span>
+          <span class="principles__total">/ 0{principles.length}</span>
+        </div>
+      </div>
+    </div>
+
+    <ol class="principles__list">
+      {
+        principles.map((p, i) => (
+          <li class="principle" data-spy-item={i}>
+            <p class="label principle__en reveal">
+              <span class="principle__n numeral">{p.n}</span>
+              {p.en}
+            </p>
+            <h3 class="principle__title">
+              {p.title.map((line) => (
+                <span class="line reveal-line">
+                  <span>{line}</span>
+                </span>
+              ))}
+            </h3>
+            <p class="prose principle__body reveal">{p.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .principles__grid {
+    display: grid;
+    gap: clamp(3rem, 2rem + 4vw, 6rem);
+  }
+
+  .principles__title {
+    margin-top: clamp(1rem, 0.75rem + 1vw, 1.75rem);
+  }
+
+  .principles__counter {
+    display: none;
+  }
+
+  .principles__list {
+    display: grid;
+    gap: clamp(5rem, 3rem + 8vw, 11rem);
+  }
+
+  .principle__en {
+    color: var(--color-ash-gray);
+  }
+
+  .principle__n {
+    color: var(--color-bone-white);
+  }
+
+  /* 広い画面では左の大きな番号が担うので、行頭の番号は消す */
+  @media (min-width: 1000px) {
+    .principle__n {
+      display: none;
+    }
+  }
+
+  .principle__title {
+    margin-top: clamp(1rem, 0.75rem + 1vw, 1.5rem);
+    font-size: var(--step-heading-lg);
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+  }
+
+  .principle__body {
+    margin-top: clamp(1.25rem, 1rem + 1vw, 2rem);
+    max-width: 30em;
+  }
+
+  @media (min-width: 1000px) {
+    .principles__grid {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    }
+
+    .principles__sticky {
+      position: sticky;
+      top: 7rem;
+    }
+
+    .principles__counter {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.75rem;
+      margin-top: clamp(3rem, 2rem + 4vw, 6rem);
+      color: var(--color-bone-white);
+    }
+
+    /* 1行ぶんの窓から、いまの番号だけを見せる */
+    .principles__digits {
+      display: grid;
+      height: 1em;
+      overflow: hidden;
+      font-size: clamp(7rem, 4rem + 7vw, 12rem);
+      font-weight: var(--font-weight-extralight);
+      line-height: 1;
+      letter-spacing: -0.06em;
+    }
+
+    .principles__digits > span {
+      grid-area: 1 / 1;
+      transform: translateY(calc((var(--i, 0) - var(--active, 0)) * 100%));
+      transition: transform 0.9s var(--ease-out);
+    }
+
+    .principles__digits > span:nth-child(1) { --i: 0; }
+    .principles__digits > span:nth-child(2) { --i: 1; }
+    .principles__digits > span:nth-child(3) { --i: 2; }
+    .principles__digits > span:nth-child(4) { --i: 3; }
+    .principles__digits > span:nth-child(5) { --i: 4; }
+
+    .principles__total {
+      padding-bottom: 0.9rem;
+      font-size: var(--text-nav-label);
+      letter-spacing: 0.1em;
+      color: var(--color-ash-gray);
+    }
+
+    /*
+      読んでいない項目の見出しは少し沈める。大きな文字に必要な 3:1 は保つ
+      （白 40% は黒地で約 3.6:1）。本文は沈めない。
+    */
+    .principle__title {
+      opacity: 0.4;
+      transition: opacity 0.7s ease;
+    }
+
+    .principle.is-active .principle__title {
+      opacity: 1;
+    }
+  }
+</style>
