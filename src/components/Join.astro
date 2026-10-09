@@ -6,9 +6,10 @@ import { links } from '../data/site';
 const qr = links.join
   ? await QRCode.toString(links.join, {
       type: 'svg',
-      margin: 0,
+      margin: 2,
       errorCorrectionLevel: 'M',
-      color: { dark: '#ffffff', light: '#00000000' },
+      // 読み取りやすさを優先し、白地に黒のモジュールにする
+      color: { dark: '#000000', light: '#ffffff' },
     })
   : '';
 ---
@@ -111,10 +112,9 @@ const qr = links.join
   .join__qr-code {
     flex: none;
     width: 6.5rem;
-    padding: 0.9rem;
-    border-radius: 0.75rem;
-    background: rgba(255, 255, 255, 0.04);
-    box-shadow: inset 0 0 0 1px var(--hairline);
+    padding: 0.35rem;
+    border-radius: 0.5rem;
+    background: #fff;
   }
 
   .join__qr-code :global(svg) {
